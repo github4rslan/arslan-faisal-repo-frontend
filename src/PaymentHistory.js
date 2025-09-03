@@ -1,7 +1,7 @@
 // src/PaymentHistory.js
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "./api"; // adjust path if needed
+import api from "./api";
 
 export default function PaymentHistory() {
   const [payments, setPayments] = useState([]);
@@ -11,10 +11,9 @@ export default function PaymentHistory() {
   const navigate = useNavigate();
   const token = localStorage.getItem("auth_token");
 
-  // axios instance with Bearer token
   const authedApi = useMemo(() => {
     const instance = api;
-    instance.defaults.headers.common.Authorization = token; // <-- raw token only
+    instance.defaults.headers.common.Authorization = token;
     return instance;
   }, [token]);
 
@@ -23,27 +22,30 @@ export default function PaymentHistory() {
       navigate("/login", { replace: true });
       return;
     }
-
-    async function fetchPayments() {
-      try {
-        const res = await authedApi.get("/payment/history");
+    authedApi
+      .get("/payments")
+      .then((res) => {
         setPayments(res.data);
-      } catch (err) {
-        setError(err.response?.data?.error || "Failed to fetch payments");
-      } finally {
         setLoading(false);
-      }
-    }
-    fetchPayments();
-  }, [token, navigate, authedApi]);
+      })
+      .catch((err) => {
+        setError(err.response?.data?.error || "Failed to fetch payments");
+        setLoading(false);
+      });
+  }, [authedApi, token, navigate]);
 
   return (
-    <div style={{ padding: "30px", maxWidth: "600px", margin: "auto" }}>
-      <h2>📜 Payment History</h2>
+    <div style={{ padding: "30px", maxWidth: "500px", margin: "auto" }}>
+      <h2>
+        <span role="img" aria-label="history">
+          🧾
+        </span>{" "}
+        Payment History
+      </h2>
       <button
         onClick={() => navigate("/dashboard")}
         style={{
-          marginBottom: "20px",
+          marginBottom: "15px",
           padding: "8px 15px",
           background: "#007bff",
           color: "white",
@@ -53,37 +55,15 @@ export default function PaymentHistory() {
       >
         ⬅ Back
       </button>
-
+      {error && <p style={{ color: "red" }}>{error}</p>}
       {loading ? (
         <p>Loading...</p>
-      ) : error ? (
-        <p style={{ color: "red" }}>{error}</p>
-      ) : payments.length === 0 ? (
-        <p>No payments found.</p>
       ) : (
-        <ul style={{ listStyle: "none", padding: 0 }}>
-          {payments.map((p) => (
-            <li
-              key={p._id}
-              style={{
-                padding: "12px",
-                marginBottom: "10px",
-                borderRadius: "8px",
-                background: "#fff",
-                boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
-              }}
-            >
-              💵 Amount: <strong>${p.amount}</strong> <br />
-              Status:{" "}
-              <span
-                style={{
-                  color: p.status === "success" ? "green" : "red",
-                }}
-              >
-                {p.status}
-              </span>{" "}
-              <br />
-              Date: {new Date(p.createdAt).toLocaleString()}
+        <ul>
+          {payments.map((payment) => (
+            <li key={payment._id}>
+              {payment.amount} -{" "}
+              {new Date(payment.date).toLocaleString()}
             </li>
           ))}
         </ul>
@@ -91,17 +71,3 @@ export default function PaymentHistory() {
     </div>
   );
 }
-
-// filepath: [auth.js](http://_vscodecontentref_/2)
-// ...existing code...
-const token = req.header("Authorization"); // should be just the token
-if (!token) return res.status(401).json({ error: "No token, authorization denied" });
-
-try {
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  req.user = decoded;
-  next();
-} catch (err) {
-  res.status(401).json({ error: "Token is not valid" });
-}
-// ...existing code...
