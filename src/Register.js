@@ -23,8 +23,7 @@ export default function Register() {
     }
 
     try {
-      // 👇 use api.js instead of fetch
-      const res = await api.post("/auth/register", form);
+      await api.post("/auth/register", form); // removed 'const res =' 
 
       setMessage("✅ Registration successful! Please login.");
       setForm({ name: "", email: "", password: "" });
