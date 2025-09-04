@@ -9,11 +9,13 @@ export default function Login() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
+  // Handle email/password change
   function handleChange(e) {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
   }
 
+  // Handle email/password login
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
@@ -45,6 +47,17 @@ export default function Login() {
       const result = await signInWithPopup(auth, provider); // Handle Google Sign-In
       const user = result.user;
       console.log(user); // Check user object to see the logged-in user details
+
+      // Send user data to backend to save in MongoDB
+      const userData = {
+        name: user.displayName,
+        email: user.email,
+        photoURL: user.photoURL,
+        uid: user.uid,
+      };
+
+      // Send data to the backend API to save in MongoDB
+      await api.post("/auth/google-signin", userData); // Your backend API route
 
       // Save token and user info to local storage
       localStorage.setItem("auth_token", user.accessToken);
