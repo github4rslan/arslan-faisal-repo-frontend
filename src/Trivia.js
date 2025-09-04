@@ -37,7 +37,10 @@ export default function Trivia() {
   };
 
   const handleAnswerSelection = (answer) => {
-    setSelectedAnswer(answer);
+    // Ensure that once an answer is selected, it is locked in
+    if (!selectedAnswer) {
+      setSelectedAnswer(answer);
+    }
   };
 
   const handleNextQuestion = () => {
@@ -45,15 +48,16 @@ export default function Trivia() {
     if (selectedAnswer === questions[currentQuestionIndex].correct_answer) {
       setScore(score + 1);
     }
-    
+
     // Move to the next question
     setCurrentQuestionIndex(currentQuestionIndex + 1);
-    setSelectedAnswer(null);  // Reset selected answer
+    setSelectedAnswer(null);  // Reset selected answer for the next question
   };
 
   const handleFinishQuiz = () => {
     // Handle end of quiz (Show score)
     alert(`Quiz finished! Your score: ${score} / ${questions.length}`);
+    navigate("/dashboard"); // Navigate back to the dashboard
   };
 
   return (
@@ -87,6 +91,7 @@ export default function Trivia() {
                         borderRadius: "5px",
                         cursor: "pointer",
                       }}
+                      disabled={selectedAnswer} // Disable options after selection
                     >
                       {answer}
                     </button>
@@ -103,6 +108,7 @@ export default function Trivia() {
                   borderRadius: "5px",
                   cursor: "pointer",
                 }}
+                disabled={!selectedAnswer} // Disable Next button until an answer is selected
               >
                 Next Question
               </button>
@@ -127,6 +133,21 @@ export default function Trivia() {
               </button>
             </div>
           )}
+          {/* Add a "Return to Dashboard" button */}
+          <button
+            onClick={handleFinishQuiz}
+            style={{
+              marginTop: "20px",
+              padding: "10px 20px",
+              backgroundColor: "#6c757d",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+            }}
+          >
+            Return to Dashboard
+          </button>
         </div>
       )}
     </div>
