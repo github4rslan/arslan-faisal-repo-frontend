@@ -64,7 +64,7 @@ export default function Dashboard() {
       >
         {/* Common features */}
         <Link to="/weather" style={cardStyle}>🌦 Weather</Link>
-        <Link to="/news" style={cardStyle}>📰 News</Link>
+        <Link to="/trivia" style={cardStyle}>🎮 Trivia Quiz</Link> {/* Renamed News to Trivia */}
         <Link to="/crypto" style={cardStyle}>💰 Crypto</Link>
         <Link to="/quotes" style={cardStyle}>💬 Quotes</Link>
         <Link to="/tasks" style={cardStyle}>📝 Tasks (CRUD)</Link>
