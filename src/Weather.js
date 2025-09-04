@@ -27,7 +27,7 @@ export default function Weather() {
     try {
       setLoading(true);
       const res = await fetch(
-        `http://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${cityName}`
+        `https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${cityName}`  // Updated to HTTPS
       );
       const data = await res.json();
 
