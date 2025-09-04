@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom"; // ✅ add Link
 import { auth, provider, signInWithPopup } from "./firebase"; // Firebase functions
 import api from "./api"; // Axios instance to interact with the backend
 
@@ -13,9 +13,8 @@ export default function Login() {
     try {
       const result = await signInWithPopup(auth, provider); // Handle Google Sign-In
       const user = result.user;
-      console.log(user); // Check user object to see the logged-in user details
 
-      // Send user data to backend to save in MongoDB
+      // Prepare data for backend
       const userData = {
         email: user.email,
         name: user.displayName,
@@ -23,17 +22,21 @@ export default function Login() {
         uid: user.uid,
       };
 
-      // Send data to the backend API to save in MongoDB
-      await api.post("/auth/google-signin", userData); // Your backend API route
+      // Save in your backend
+      await api.post("/auth/google-signin", userData);
 
-      // Save token and user info to local storage
-      localStorage.setItem("auth_token", user.accessToken);
+      // Store token + user locally
+      // Note: In Firebase v9, prefer an ID token if you need a verified JWT:
+      // const idToken = await user.getIdToken();
+      // localStorage.setItem("auth_token", idToken);
+      localStorage.setItem("auth_token", user.accessToken || ""); // falls back if you keep this shape
       localStorage.setItem("user", JSON.stringify(user));
 
       setMessage("✅ Login successful!");
-      navigate("/dashboard"); // Redirect to the dashboard after login
+      navigate("/dashboard");
     } catch (err) {
       setError("Google login failed");
+      console.error(err);
     }
   };
 
