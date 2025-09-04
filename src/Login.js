@@ -1,7 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import api from "./api"; // Import the Axios instance
-import { auth, provider, signInWithPopup } from "./firebase"; // Firebase auth functions
+import api from "./api";
+import {
+  auth,
+  provider,
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
+} from "./firebase";
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -9,9 +15,34 @@ export default function Login() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Handle redirect result (iOS/Safari/blocked popups)
+    getRedirectResult(auth)
+      .then(async (result) => {
+        if (result?.user) {
+          const user = result.user;
+          const idToken = await user.getIdToken(); // verified JWT
+          // OPTIONAL: create a server session so protected routes work in prod
+          try {
+            await api.post("/auth/google-signin", { idToken });
+          } catch (e) {
+            console.error("Backend session create failed:", e);
+          }
+          localStorage.setItem("auth_token", idToken);
+          localStorage.setItem("user", JSON.stringify(user));
+          setMessage("✅ Login successful!");
+          navigate("/dashboard");
+        }
+      })
+      .catch((e) => {
+        console.error(e);
+        setError(e.message || "Google login failed");
+      });
+  }, [navigate]);
+
   function handleChange(e) {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+    setForm((f) => ({ ...f, [name]: value }));
   }
 
   async function handleSubmit(e) {
@@ -25,13 +56,9 @@ export default function Login() {
     }
 
     try {
-      // Use API for email/password login
       const res = await api.post("/auth/login", form);
-
-      // Save token + user info
       localStorage.setItem("auth_token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
-
       setMessage("✅ Login successful!");
       navigate("/dashboard");
     } catch (err) {
@@ -39,52 +66,42 @@ export default function Login() {
     }
   }
 
-  // Google Sign-In handler
   const handleGoogleLogin = async () => {
+    setError("");
+    setMessage("");
     try {
-      const result = await signInWithPopup(auth, provider); // Handle Google Sign-In
+      const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      console.log(user); // Check user object to see the logged-in user details
+      const idToken = await user.getIdToken(); // verified JWT
 
-      // Save token and user info to local storage
-      localStorage.setItem("auth_token", user.accessToken);
+      // OPTIONAL (recommended): tell backend to create a session:
+      try {
+        await api.post("/auth/google-signin", { idToken });
+      } catch (e) {
+        console.error("Backend session create failed:", e);
+      }
+
+      localStorage.setItem("auth_token", idToken);
       localStorage.setItem("user", JSON.stringify(user));
-
       setMessage("✅ Login successful!");
-      navigate("/dashboard"); // Redirect to the dashboard after login
-    } catch (err) {
-      setError("Google login failed");
+      navigate("/dashboard");
+    } catch (e) {
+      console.warn("Popup failed, falling back to redirect:", e);
+      // Some browsers/contexts block popups—this keeps prod working
+      await signInWithRedirect(auth, provider);
     }
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-      }}
-    >
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          border: "1px solid #ccc",
-          padding: "20px",
-          borderRadius: "8px",
-          backgroundColor: "#fff",
-          width: "300px",
-        }}
-      >
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+      <form onSubmit={handleSubmit}
+        style={{ border: "1px solid #ccc", padding: "20px", borderRadius: "8px", backgroundColor: "#fff", width: "300px" }}>
         <h2 style={{ textAlign: "center", marginBottom: "15px" }}>Login</h2>
 
         <div style={{ marginBottom: "10px" }}>
           <label>Email</label>
           <input
-            type="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
+            type="email" name="email" value={form.email} onChange={handleChange}
             placeholder="you@example.com"
             style={{ width: "100%", padding: "8px", marginTop: "5px" }}
           />
@@ -93,10 +110,7 @@ export default function Login() {
         <div style={{ marginBottom: "10px" }}>
           <label>Password</label>
           <input
-            type="password"
-            name="password"
-            value={form.password}
-            onChange={handleChange}
+            type="password" name="password" value={form.password} onChange={handleChange}
             placeholder="••••••••"
             style={{ width: "100%", padding: "8px", marginTop: "5px" }}
           />
@@ -105,50 +119,18 @@ export default function Login() {
         {error && <p style={{ color: "red", fontSize: "14px" }}>{error}</p>}
         {message && <p style={{ color: "green", fontSize: "14px" }}>{message}</p>}
 
-        <button
-          type="submit"
-          style={{
-            width: "100%",
-            padding: "10px",
-            backgroundColor: "#007bff",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
+        <button type="submit"
+          style={{ width: "100%", padding: "10px", backgroundColor: "#007bff", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" }}>
           Login with Email
         </button>
 
-        {/* Google Sign-In Button */}
-        <button
-          type="button"
-          onClick={handleGoogleLogin}
-          style={{
-            width: "100%",
-            padding: "10px",
-            backgroundColor: "#db4437", // Google Red Color
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-            marginTop: "10px",
-          }}
-        >
+        <button type="button" onClick={handleGoogleLogin}
+          style={{ width: "100%", padding: "10px", backgroundColor: "#db4437", color: "white", border: "none", borderRadius: "5px", cursor: "pointer", marginTop: "10px" }}>
           Login with Google
         </button>
 
-        <Link
-          to="/register"
-          style={{
-            display: "block",
-            textAlign: "center",
-            marginTop: "10px",
-            color: "#007bff",
-            textDecoration: "none",
-            fontSize: "14px",
-          }}
-        >
+        <Link to="/register"
+          style={{ display: "block", textAlign: "center", marginTop: "10px", color: "#007bff", textDecoration: "none", fontSize: "14px" }}>
           Don’t have an account? Register
         </Link>
       </form>
