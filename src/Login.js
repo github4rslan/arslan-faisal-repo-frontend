@@ -1,72 +1,106 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom"; // ✅ add Link
-import { auth, provider, signInWithPopup } from "./firebase"; // Firebase functions
-import api from "./api"; // Axios instance to interact with the backend
+import { Link, useNavigate } from "react-router-dom";
+import api from "./api"; // 👈 import axios instance
 
 export default function Login() {
+  const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  // Google Sign-In handler
-  const handleGoogleLogin = async () => {
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setError("");
+    setMessage("");
+
+    if (!form.email || !form.password) {
+      setError("Both fields are required!");
+      return;
+    }
+
     try {
-      const result = await signInWithPopup(auth, provider); // Handle Google Sign-In
-      const user = result.user;
+      // 👇 use api.js instead of fetch
+      const res = await api.post("/auth/login", form);
 
-      // Prepare data for backend
-      const userData = {
-        email: user.email,
-        name: user.displayName,
-        photoURL: user.photoURL,
-        uid: user.uid,
-      };
-
-      // Save in your backend
-      await api.post("/auth/google-signin", userData);
-
-      // Store token + user locally
-      // Note: In Firebase v9, prefer an ID token if you need a verified JWT:
-      // const idToken = await user.getIdToken();
-      // localStorage.setItem("auth_token", idToken);
-      localStorage.setItem("auth_token", user.accessToken || ""); // falls back if you keep this shape
-      localStorage.setItem("user", JSON.stringify(user));
+      // ✅ Save token + user info
+      localStorage.setItem("auth_token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
 
       setMessage("✅ Login successful!");
       navigate("/dashboard");
     } catch (err) {
-      setError("Google login failed");
-      console.error(err);
+      setError(err.response?.data?.error || "Login failed");
     }
-  };
+  }
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-      <div style={{ border: "1px solid #ccc", padding: "20px", borderRadius: "8px", backgroundColor: "#fff", width: "300px" }}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+      }}
+    >
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          border: "1px solid #ccc",
+          padding: "20px",
+          borderRadius: "8px",
+          backgroundColor: "#fff",
+          width: "300px",
+        }}
+      >
         <h2 style={{ textAlign: "center", marginBottom: "15px" }}>Login</h2>
+
+        <div style={{ marginBottom: "10px" }}>
+          <label>Email</label>
+          <input
+            type="email"
+            name="email"
+            value={form.email}
+            onChange={handleChange}
+            placeholder="you@example.com"
+            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
+          />
+        </div>
+
+        <div style={{ marginBottom: "10px" }}>
+          <label>Password</label>
+          <input
+            type="password"
+            name="password"
+            value={form.password}
+            onChange={handleChange}
+            placeholder="••••••••"
+            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
+          />
+        </div>
 
         {error && <p style={{ color: "red", fontSize: "14px" }}>{error}</p>}
         {message && <p style={{ color: "green", fontSize: "14px" }}>{message}</p>}
 
-        {/* Google Sign-In Button */}
         <button
-          type="button"
-          onClick={handleGoogleLogin}
+          type="submit"
           style={{
             width: "100%",
             padding: "10px",
-            backgroundColor: "#db4437", // Google Red Color
+            backgroundColor: "#007bff",
             color: "white",
             border: "none",
             borderRadius: "5px",
             cursor: "pointer",
-            marginTop: "10px",
           }}
         >
-          Login with Google
+          Login
         </button>
 
-        {/* Option for users who don't have an account */}
         <Link
           to="/register"
           style={{
@@ -80,7 +114,7 @@ export default function Login() {
         >
           Don’t have an account? Register
         </Link>
-      </div>
+      </form>
     </div>
   );
 }
