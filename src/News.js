@@ -4,10 +4,11 @@ import { useNavigate } from "react-router-dom";
 export default function News() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); // New error state
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const API_KEY = "b06a0d85fdd24b078674e5f0a5c7eede"; // ✅ your key
+  // ✅ Use the correct API key
+  const API_KEY = "b06a0d85fdd24b078674e5f0a5c7eede"; // World News API key
 
   useEffect(() => {
     const token = localStorage.getItem("auth_token");
@@ -20,9 +21,12 @@ export default function News() {
   }, [navigate]);
 
   const fetchNews = async () => {
+    setLoading(true);
+    setError(null); // Reset any previous errors
+
     try {
       const res = await fetch(
-        `/api/news?country=us&pageSize=10&apiKey=${API_KEY}`  // Use the proxy path
+        `https://newsapi.org/v2/top-headlines?country=us&pageSize=10&apiKey=${API_KEY}`
       );
 
       if (!res.ok) {
@@ -31,17 +35,17 @@ export default function News() {
 
       const data = await res.json();
       if (data.status === "ok") {
-        setArticles(data.articles);
+        setArticles(data.articles);  // Save articles if response is successful
       } else {
         setError("Error fetching news: " + data.message);
-        setArticles([]);
+        setArticles([]);  // Clear articles in case of an error
       }
     } catch (err) {
       console.error("News fetch error:", err);
-      setArticles([]);
+      setArticles([]);  // Clear articles in case of an error
       setError("There was an error fetching the news. Please try again later.");
     } finally {
-      setLoading(false);
+      setLoading(false); // Stop loading after the API call
     }
   };
 
