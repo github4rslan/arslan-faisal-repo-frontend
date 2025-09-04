@@ -23,15 +23,23 @@ export default function News() {
       const res = await fetch(
         `https://newsapi.org/v2/top-headlines?country=us&pageSize=10&apiKey=${API_KEY}`
       );
+      
+      if (!res.ok) {
+        throw new Error("Failed to fetch news articles");
+      }
+      
       const data = await res.json();
 
       if (data.status === "ok") {
         setArticles(data.articles);
       } else {
         console.error("Error fetching news:", data);
+        alert("Error fetching news articles. Please try again later.");
       }
     } catch (err) {
       console.error("News fetch error:", err);
+      setArticles([]); // Clear articles on error
+      alert("There was an error fetching the news. Please try again later.");
     } finally {
       setLoading(false);
     }
