@@ -21,7 +21,7 @@ export default function Weather() {
     if (storedUser) setUser(JSON.parse(storedUser));
 
     fetchWeather(city); // load default city
-  }, [city]); // Added 'city' to dependency array
+  }, [city, navigate]); // Added 'navigate' to the dependency array
 
   const fetchWeather = async (cityName) => {
     try {
