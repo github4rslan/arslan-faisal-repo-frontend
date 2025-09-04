@@ -7,8 +7,8 @@ export default function News() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // ✅ Use the correct API key
-  const API_KEY = "b06a0d85fdd24b078674e5f0a5c7eede"; // World News API key
+  // ✅ Use the correct API key from World News API
+  const API_KEY = "bc137755eac6456e886e66a71137a319"; // World News API key
 
   useEffect(() => {
     const token = localStorage.getItem("auth_token");
@@ -26,7 +26,7 @@ export default function News() {
 
     try {
       const res = await fetch(
-        `https://newsapi.org/v2/top-headlines?country=us&pageSize=10&apiKey=${API_KEY}`
+        `https://worldnewsapi.com/api/v1/top-headlines?country=us&pageSize=10&apiKey=${API_KEY}`  // Correct API endpoint
       );
 
       if (!res.ok) {
