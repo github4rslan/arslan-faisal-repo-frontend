@@ -1,40 +1,43 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const News = () => {
+export default function News() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // Use your new generated API key here
-  const API_KEY = "bc137755eac6456e886e66a71137a319";  // Replace with your new API key
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchNews = async () => {
-      setLoading(true);
-      setError(null); // Reset error
-
-      try {
-        const response = await axios.get(
-          `https://worldnewsapi.com/api/v1/top-headlines?country=us&pageSize=10&apiKey=${API_KEY}`
-        );
-
-        // Check if the response status is okay
-        if (response.status === 200 && response.data.status === "ok") {
-          setArticles(response.data.articles); // Set articles if successful
-        } else {
-          setError("Error fetching news: " + response.data.message);
-        }
-      } catch (err) {
-        setError("There was an error fetching the news. Please try again later.");
-        console.error("Error fetching news:", err);
-      } finally {
-        setLoading(false); // Stop loading after the request
-      }
-    };
+    const token = localStorage.getItem("auth_token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
 
     fetchNews();
-  }, []);
+  }, [navigate]);
+
+  const fetchNews = async () => {
+    setLoading(true);
+    setError(null); // Reset error
+
+    try {
+      // Using a CORS proxy to bypass CORS restrictions
+      const res = await fetch(
+        `https://api.allorigins.win/get?url=${encodeURIComponent(
+          "https://newsapi.org/v2/top-headlines?country=us&pageSize=10&apiKey=bc137755eac6456e886e66a71137a319" // Your News API key
+        )}`
+      );
+      const data = await res.json();
+      const newsData = JSON.parse(data.contents);  // Parse the data from the CORS proxy
+      setArticles(newsData.articles);
+    } catch (err) {
+      setError("Error fetching news: " + err.message);
+      console.error("Error fetching news:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div style={{ padding: "30px", textAlign: "center" }}>
@@ -103,7 +106,7 @@ const News = () => {
       )}
 
       <button
-        onClick={() => window.location.href = "/dashboard"}
+        onClick={() => navigate("/dashboard")}
         style={{
           marginTop: "30px",
           padding: "10px 20px",
@@ -118,6 +121,4 @@ const News = () => {
       </button>
     </div>
   );
-};
-
-export default News;
+}
