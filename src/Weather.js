@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function News() {
-  const [articles, setArticles] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); // New error state
+export default function Weather() {
+  const [user, setUser] = useState(null);
+  const [weather, setWeather] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [city, setCity] = useState("London"); // default city
   const navigate = useNavigate();
 
-  const API_KEY = "b06a0d85fdd24b078674e5f0a5c7eede"; // ✅ your key
+  const API_KEY = "d8d672f40b4d4a36a35223846252308"; // your WeatherAPI key
 
   useEffect(() => {
     const token = localStorage.getItem("auth_token");
@@ -16,101 +17,96 @@ export default function News() {
       return;
     }
 
-    fetchNews();
-  }, [navigate]);
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) setUser(JSON.parse(storedUser));
 
-  const fetchNews = async () => {
+    fetchWeather(city); // load default city
+  }, [city, navigate]); // Added 'navigate' to the dependency array
+
+  const fetchWeather = async (cityName) => {
     try {
+      setLoading(true);
       const res = await fetch(
-        `/api/news?country=us&pageSize=10&apiKey=${API_KEY}`  // Use the proxy path
+        `https://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${cityName}`  // Updated to HTTPS
       );
-
-      if (!res.ok) {
-        throw new Error("Failed to fetch news articles");
-      }
-
       const data = await res.json();
-      if (data.status === "ok") {
-        setArticles(data.articles);
+
+      if (data.error) {
+        setWeather(null);
+        alert(data.error.message);
       } else {
-        setError("Error fetching news: " + data.message);
-        setArticles([]);
+        setWeather(data);
       }
     } catch (err) {
-      console.error("News fetch error:", err);
-      setArticles([]);
-      setError("There was an error fetching the news. Please try again later.");
+      console.error("Weather fetch error:", err);
     } finally {
       setLoading(false);
     }
   };
 
+  function handleSearch(e) {
+    e.preventDefault();
+    if (city.trim()) {
+      fetchWeather(city);
+    }
+  }
+
   return (
     <div style={{ padding: "30px", textAlign: "center" }}>
-      <h1>📰 Latest News</h1>
-
-      {error && <div style={{ color: "red", margin: "10px 0" }}>{error}</div>}
-
-      {loading ? (
-        <p>Loading news...</p>
-      ) : (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-            gap: "20px",
-            marginTop: "20px",
-          }}
-        >
-          {articles.map((article, index) => (
-            <div
-              key={index}
-              style={{
-                border: "1px solid #ddd",
-                borderRadius: "8px",
-                padding: "15px",
-                backgroundColor: "#fff",
-                textAlign: "left",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-              }}
-            >
-              {article.urlToImage && (
-                <img
-                  src={article.urlToImage}
-                  alt="news"
-                  style={{
-                    width: "100%",
-                    height: "180px",
-                    objectFit: "cover",
-                    borderRadius: "8px",
-                  }}
-                />
-              )}
-              <h3 style={{ fontSize: "18px", marginTop: "10px" }}>
-                {article.title}
-              </h3>
-              <p style={{ fontSize: "14px", color: "#555" }}>
-                {article.description || "No description available."}
-              </p>
-              <a
-                href={article.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: "inline-block",
-                  marginTop: "10px",
-                  color: "#007bff",
-                  textDecoration: "none",
-                  fontWeight: "bold",
-                }}
-              >
-                Read more →
-              </a>
-            </div>
-          ))}
-        </div>
+      <h1>🌦 Weather</h1>
+      {user && (
+        <p>
+          Logged in as <strong>{user.name}</strong> ({user.email})
+        </p>
       )}
 
+      {/* Search City */}
+      <form onSubmit={handleSearch} style={{ marginBottom: "20px" }}>
+        <input
+          type="text"
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+          placeholder="Enter city name"
+          style={{
+            padding: "8px",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+            marginRight: "10px",
+          }}
+        />
+        <button
+          type="submit"
+          style={{
+            padding: "8px 15px",
+            backgroundColor: "#007bff",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          Search
+        </button>
+      </form>
+
+      {loading ? (
+        <p>Loading weather...</p>
+      ) : weather && weather.current ? (
+        <div style={{ textAlign: "center" }}>
+          <p>
+            <strong>{weather.location.name}</strong> (
+            {weather.location.country})
+          </p>
+          <p>
+            {weather.current.temp_c}°C — {weather.current.condition.text}
+          </p>
+          <img src={weather.current.condition.icon} alt="weather icon" />
+        </div>
+      ) : (
+        <p>Enter a city to see weather</p>
+      )}
+
+      {/* Back to Dashboard */}
       <button
         onClick={() => navigate("/dashboard")}
         style={{
