@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 export default function News() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);  // New error state
   const navigate = useNavigate();
 
   const API_KEY = "b06a0d85fdd24b078674e5f0a5c7eede"; // ✅ your key
@@ -33,13 +34,13 @@ export default function News() {
       if (data.status === "ok") {
         setArticles(data.articles);
       } else {
-        console.error("Error fetching news:", data);
-        alert("Error fetching news articles. Please try again later.");
+        setError("Error fetching news: " + data.message);
+        setArticles([]);
       }
     } catch (err) {
       console.error("News fetch error:", err);
-      setArticles([]); // Clear articles on error
-      alert("There was an error fetching the news. Please try again later.");
+      setArticles([]);
+      setError("There was an error fetching the news. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -49,6 +50,8 @@ export default function News() {
     <div style={{ padding: "30px", textAlign: "center" }}>
       <h1>📰 Latest News</h1>
 
+      {error && <div style={{ color: "red", margin: "10px 0" }}>{error}</div>}  {/* Display error message */}
+      
       {loading ? (
         <p>Loading news...</p>
       ) : (
