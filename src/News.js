@@ -1,58 +1,40 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-export default function News() {
+const News = () => {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
 
-  // ✅ Use the correct API key from World News API
-  const API_KEY = "bc137755eac6456e886e66a71137a319"; // World News API key
+  // Use your new generated API key here
+  const API_KEY = "bc137755eac6456e886e66a71137a319";  // Replace with your new API key
 
   useEffect(() => {
-    const token = localStorage.getItem("auth_token");
-    if (!token) {
-      navigate("/login");
-      return;
-    }
+    const fetchNews = async () => {
+      setLoading(true);
+      setError(null); // Reset error
+
+      try {
+        const response = await axios.get(
+          `https://worldnewsapi.com/api/v1/top-headlines?country=us&pageSize=10&apiKey=${API_KEY}`
+        );
+
+        // Check if the response status is okay
+        if (response.status === 200 && response.data.status === "ok") {
+          setArticles(response.data.articles); // Set articles if successful
+        } else {
+          setError("Error fetching news: " + response.data.message);
+        }
+      } catch (err) {
+        setError("There was an error fetching the news. Please try again later.");
+        console.error("Error fetching news:", err);
+      } finally {
+        setLoading(false); // Stop loading after the request
+      }
+    };
 
     fetchNews();
-  }, [navigate]);
-
-  const fetchNews = async () => {
-    setLoading(true);
-    setError(null); // Reset any previous errors
-
-    try {
-      // Add a CORS proxy URL before your API endpoint
-      const res = await fetch(
-        `https://api.allorigins.win/get?url=${encodeURIComponent(
-          `https://worldnewsapi.com/api/v1/top-headlines?country=us&pageSize=10&apiKey=${API_KEY}`
-        )}`
-      );
-
-      if (!res.ok) {
-        throw new Error("Failed to fetch news articles");
-      }
-
-      const data = await res.json();
-      const newsData = JSON.parse(data.contents); // Parse the JSON response
-
-      if (newsData.status === "ok") {
-        setArticles(newsData.articles);  // Save articles if response is successful
-      } else {
-        setError("Error fetching news: " + newsData.message);
-        setArticles([]);  // Clear articles in case of an error
-      }
-    } catch (err) {
-      console.error("News fetch error:", err);
-      setArticles([]);  // Clear articles in case of an error
-      setError("There was an error fetching the news. Please try again later.");
-    } finally {
-      setLoading(false); // Stop loading after the API call
-    }
-  };
+  }, []);
 
   return (
     <div style={{ padding: "30px", textAlign: "center" }}>
@@ -121,7 +103,7 @@ export default function News() {
       )}
 
       <button
-        onClick={() => navigate("/dashboard")}
+        onClick={() => window.location.href = "/dashboard"}
         style={{
           marginTop: "30px",
           padding: "10px 20px",
@@ -136,4 +118,6 @@ export default function News() {
       </button>
     </div>
   );
-}
+};
+
+export default News;
