@@ -4,7 +4,6 @@ import Login from "./Login";
 import Register from "./Register";
 import Dashboard from "./Dashboard";
 import Weather from "./Weather";
-import News from "./News";
 import Crypto from "./Crypto";
 import Quotes from "./Quotes";
 import Tasks from "./Tasks"; // ✅ NEW CRUD page
@@ -12,6 +11,7 @@ import AdminUsers from "./AdminUsers";
 import AdminAddUser from "./AdminAddUser";
 import Payment from "./Payment";
 import PaymentHistory from "./PaymentHistory";
+import Trivia from "./Trivia";
 
 function App() {
   return (
@@ -22,7 +22,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/weather" element={<Weather />} />
-        <Route path="/news" element={<News />} />
+        <Route path="/trivia" element={<Trivia />} />
         <Route path="/crypto" element={<Crypto />} />
         <Route path="/quotes" element={<Quotes />} />
         <Route path="/tasks" element={<Tasks />} /> {/* ✅ NEW route */}
