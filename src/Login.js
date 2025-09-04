@@ -1,45 +1,12 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import api from "./api"; // Import the Axios instance
-import { auth, provider, signInWithPopup } from "./firebase"; // Firebase auth functions
+import { useNavigate } from "react-router-dom";
+import { auth, provider, signInWithPopup } from "./firebase"; // Firebase functions
+import api from "./api"; // Axios instance to interact with the backend
 
 export default function Login() {
-  const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
-
-  // Handle email/password change
-  function handleChange(e) {
-    const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
-  }
-
-  // Handle email/password login
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setError("");
-    setMessage("");
-
-    if (!form.email || !form.password) {
-      setError("Both fields are required!");
-      return;
-    }
-
-    try {
-      // Use API for email/password login
-      const res = await api.post("/auth/login", form);
-
-      // Save token + user info
-      localStorage.setItem("auth_token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-
-      setMessage("✅ Login successful!");
-      navigate("/dashboard");
-    } catch (err) {
-      setError(err.response?.data?.error || "Login failed");
-    }
-  }
 
   // Google Sign-In handler
   const handleGoogleLogin = async () => {
@@ -50,8 +17,8 @@ export default function Login() {
 
       // Send user data to backend to save in MongoDB
       const userData = {
-        name: user.displayName,
         email: user.email,
+        name: user.displayName,
         photoURL: user.photoURL,
         uid: user.uid,
       };
@@ -71,67 +38,12 @@ export default function Login() {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-      }}
-    >
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          border: "1px solid #ccc",
-          padding: "20px",
-          borderRadius: "8px",
-          backgroundColor: "#fff",
-          width: "300px",
-        }}
-      >
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+      <div style={{ border: "1px solid #ccc", padding: "20px", borderRadius: "8px", backgroundColor: "#fff", width: "300px" }}>
         <h2 style={{ textAlign: "center", marginBottom: "15px" }}>Login</h2>
-
-        <div style={{ marginBottom: "10px" }}>
-          <label>Email</label>
-          <input
-            type="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            placeholder="you@example.com"
-            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
-          />
-        </div>
-
-        <div style={{ marginBottom: "10px" }}>
-          <label>Password</label>
-          <input
-            type="password"
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-            placeholder="••••••••"
-            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
-          />
-        </div>
 
         {error && <p style={{ color: "red", fontSize: "14px" }}>{error}</p>}
         {message && <p style={{ color: "green", fontSize: "14px" }}>{message}</p>}
-
-        <button
-          type="submit"
-          style={{
-            width: "100%",
-            padding: "10px",
-            backgroundColor: "#007bff",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Login with Email
-        </button>
 
         {/* Google Sign-In Button */}
         <button
@@ -151,6 +63,7 @@ export default function Login() {
           Login with Google
         </button>
 
+        {/* Option for users who don't have an account */}
         <Link
           to="/register"
           style={{
@@ -164,7 +77,7 @@ export default function Login() {
         >
           Don’t have an account? Register
         </Link>
-      </form>
+      </div>
     </div>
   );
 }
