@@ -25,8 +25,11 @@ export default function News() {
     setError(null); // Reset any previous errors
 
     try {
+      // Add a CORS proxy URL before your API endpoint
       const res = await fetch(
-        `https://worldnewsapi.com/api/v1/top-headlines?country=us&pageSize=10&apiKey=${API_KEY}`  // Correct API endpoint
+        `https://api.allorigins.win/get?url=${encodeURIComponent(
+          `https://worldnewsapi.com/api/v1/top-headlines?country=us&pageSize=10&apiKey=${API_KEY}`
+        )}`
       );
 
       if (!res.ok) {
@@ -34,10 +37,12 @@ export default function News() {
       }
 
       const data = await res.json();
-      if (data.status === "ok") {
-        setArticles(data.articles);  // Save articles if response is successful
+      const newsData = JSON.parse(data.contents); // Parse the JSON response
+
+      if (newsData.status === "ok") {
+        setArticles(newsData.articles);  // Save articles if response is successful
       } else {
-        setError("Error fetching news: " + data.message);
+        setError("Error fetching news: " + newsData.message);
         setArticles([]);  // Clear articles in case of an error
       }
     } catch (err) {
