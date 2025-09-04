@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import api from "./api"; // 👈 import axios instance
+import api from "./api"; // Import the Axios instance
+import { auth, provider, signInWithPopup } from "./firebase"; // Firebase auth functions
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -24,10 +25,10 @@ export default function Login() {
     }
 
     try {
-      // 👇 use api.js instead of fetch
+      // Use API for email/password login
       const res = await api.post("/auth/login", form);
 
-      // ✅ Save token + user info
+      // Save token + user info
       localStorage.setItem("auth_token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
@@ -37,6 +38,24 @@ export default function Login() {
       setError(err.response?.data?.error || "Login failed");
     }
   }
+
+  // Google Sign-In handler
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider); // Handle Google Sign-In
+      const user = result.user;
+      console.log(user); // Check user object to see the logged-in user details
+
+      // Save token and user info to local storage
+      localStorage.setItem("auth_token", user.accessToken);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      setMessage("✅ Login successful!");
+      navigate("/dashboard"); // Redirect to the dashboard after login
+    } catch (err) {
+      setError("Google login failed");
+    }
+  };
 
   return (
     <div
@@ -98,7 +117,25 @@ export default function Login() {
             cursor: "pointer",
           }}
         >
-          Login
+          Login with Email
+        </button>
+
+        {/* Google Sign-In Button */}
+        <button
+          type="button"
+          onClick={handleGoogleLogin}
+          style={{
+            width: "100%",
+            padding: "10px",
+            backgroundColor: "#db4437", // Google Red Color
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+            marginTop: "10px",
+          }}
+        >
+          Login with Google
         </button>
 
         <Link
