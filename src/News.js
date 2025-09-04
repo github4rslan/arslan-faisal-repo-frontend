@@ -29,8 +29,20 @@ export default function News() {
         )}`
       );
       const data = await res.json();
-      const newsData = JSON.parse(data.contents);  // Parse the data from the CORS proxy
-      setArticles(newsData.articles);
+      
+      // Check if 'contents' exists and is not empty
+      if (data.contents) {
+        const newsData = JSON.parse(data.contents);
+
+        // Check if newsData.articles is an array before setting state
+        if (newsData.articles && Array.isArray(newsData.articles)) {
+          setArticles(newsData.articles);
+        } else {
+          setError('Failed to load news articles');
+        }
+      } else {
+        setError('Failed to fetch news data');
+      }
     } catch (err) {
       setError("Error fetching news: " + err.message);
       console.error("Error fetching news:", err);
@@ -56,52 +68,56 @@ export default function News() {
             marginTop: "20px",
           }}
         >
-          {articles.map((article, index) => (
-            <div
-              key={index}
-              style={{
-                border: "1px solid #ddd",
-                borderRadius: "8px",
-                padding: "15px",
-                backgroundColor: "#fff",
-                textAlign: "left",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-              }}
-            >
-              {article.urlToImage && (
-                <img
-                  src={article.urlToImage}
-                  alt="news"
-                  style={{
-                    width: "100%",
-                    height: "180px",
-                    objectFit: "cover",
-                    borderRadius: "8px",
-                  }}
-                />
-              )}
-              <h3 style={{ fontSize: "18px", marginTop: "10px" }}>
-                {article.title}
-              </h3>
-              <p style={{ fontSize: "14px", color: "#555" }}>
-                {article.description || "No description available."}
-              </p>
-              <a
-                href={article.url}
-                target="_blank"
-                rel="noopener noreferrer"
+          {articles.length > 0 ? (
+            articles.map((article, index) => (
+              <div
+                key={index}
                 style={{
-                  display: "inline-block",
-                  marginTop: "10px",
-                  color: "#007bff",
-                  textDecoration: "none",
-                  fontWeight: "bold",
+                  border: "1px solid #ddd",
+                  borderRadius: "8px",
+                  padding: "15px",
+                  backgroundColor: "#fff",
+                  textAlign: "left",
+                  boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
                 }}
               >
-                Read more →
-              </a>
-            </div>
-          ))}
+                {article.urlToImage && (
+                  <img
+                    src={article.urlToImage}
+                    alt="news"
+                    style={{
+                      width: "100%",
+                      height: "180px",
+                      objectFit: "cover",
+                      borderRadius: "8px",
+                    }}
+                  />
+                )}
+                <h3 style={{ fontSize: "18px", marginTop: "10px" }}>
+                  {article.title}
+                </h3>
+                <p style={{ fontSize: "14px", color: "#555" }}>
+                  {article.description || "No description available."}
+                </p>
+                <a
+                  href={article.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "inline-block",
+                    marginTop: "10px",
+                    color: "#007bff",
+                    textDecoration: "none",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Read more →
+                </a>
+              </div>
+            ))
+          ) : (
+            <p>No articles available</p>
+          )}
         </div>
       )}
 
