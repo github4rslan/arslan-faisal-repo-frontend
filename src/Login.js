@@ -21,14 +21,17 @@ export default function Login() {
       .then(async (result) => {
         if (result?.user) {
           const user = result.user;
-          const idToken = await user.getIdToken(); // verified JWT
-          // OPTIONAL: create a server session so protected routes work in prod
+
+          // ✅ send email + name instead of idToken
           try {
-            await api.post("/auth/google-signin", { idToken });
+            await api.post("/api/auth/google-signin", {
+              email: user.email,
+              name: user.displayName,
+            });
           } catch (e) {
             console.error("Backend session create failed:", e);
           }
-          localStorage.setItem("auth_token", idToken);
+
           localStorage.setItem("user", JSON.stringify(user));
           setMessage("✅ Login successful!");
           navigate("/dashboard");
@@ -56,7 +59,7 @@ export default function Login() {
     }
 
     try {
-      const res = await api.post("/auth/login", form);
+      const res = await api.post("/api/auth/login", form); // ✅ added /api prefix
       localStorage.setItem("auth_token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
       setMessage("✅ Login successful!");
@@ -72,22 +75,22 @@ export default function Login() {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      const idToken = await user.getIdToken(); // verified JWT
 
-      // OPTIONAL (recommended): tell backend to create a session:
+      // ✅ send email + name instead of idToken
       try {
-        await api.post("/auth/google-signin", { idToken });
+        await api.post("/api/auth/google-signin", {
+          email: user.email,
+          name: user.displayName,
+        });
       } catch (e) {
         console.error("Backend session create failed:", e);
       }
 
-      localStorage.setItem("auth_token", idToken);
       localStorage.setItem("user", JSON.stringify(user));
       setMessage("✅ Login successful!");
       navigate("/dashboard");
     } catch (e) {
       console.warn("Popup failed, falling back to redirect:", e);
-      // Some browsers/contexts block popups—this keeps prod working
       await signInWithRedirect(auth, provider);
     }
   };
