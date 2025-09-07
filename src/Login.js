@@ -16,22 +16,18 @@ export default function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Handle redirect result (iOS/Safari/blocked popups)
+    // Handle redirect result for Google login
     getRedirectResult(auth)
       .then(async (result) => {
         if (result?.user) {
           const user = result.user;
-
-          // ✅ send email + name instead of idToken
+          const idToken = await user.getIdToken();
           try {
-            await api.post("/api/auth/google-signin", {
-              email: user.email,
-              name: user.displayName,
-            });
+            await api.post("/auth/google-signin", { idToken });
           } catch (e) {
             console.error("Backend session create failed:", e);
           }
-
+          localStorage.setItem("auth_token", idToken);
           localStorage.setItem("user", JSON.stringify(user));
           setMessage("✅ Login successful!");
           navigate("/dashboard");
@@ -59,10 +55,16 @@ export default function Login() {
     }
 
     try {
-      const res = await api.post("/api/auth/login", form); // ✅ added /api prefix
+      // Login + send welcome email from backend
+      const res = await api.post("/auth/login", {
+        email: form.email,
+        password: form.password,
+      });
+
       localStorage.setItem("auth_token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
-      setMessage("✅ Login successful!");
+
+      setMessage("✅ Login successful! Redirecting...");
       navigate("/dashboard");
     } catch (err) {
       setError(err.response?.data?.error || "Login failed");
@@ -75,17 +77,15 @@ export default function Login() {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
+      const idToken = await user.getIdToken();
 
-      // ✅ send email + name instead of idToken
       try {
-        await api.post("/api/auth/google-signin", {
-          email: user.email,
-          name: user.displayName,
-        });
+        await api.post("/auth/google-signin", { idToken });
       } catch (e) {
         console.error("Backend session create failed:", e);
       }
 
+      localStorage.setItem("auth_token", idToken);
       localStorage.setItem("user", JSON.stringify(user));
       setMessage("✅ Login successful!");
       navigate("/dashboard");
