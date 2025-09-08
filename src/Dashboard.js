@@ -21,7 +21,7 @@ export default function Dashboard() {
     navigate("/login");
   }
 
-  const isAdmin = user?.role === "admin"; // ✅ check if admin
+  const isAdmin = user?.role === "admin";
 
   return (
     <div
@@ -64,22 +64,21 @@ export default function Dashboard() {
       >
         {/* Common features */}
         <Link to="/weather" style={cardStyle}>🌦 Weather</Link>
-        <Link to="/trivia" style={cardStyle}>🎮 Trivia Quiz</Link> {/* Renamed News to Trivia */}
+        <Link to="/trivia" style={cardStyle}>🎮 Trivia Quiz</Link>
         <Link to="/crypto" style={cardStyle}>💰 Crypto</Link>
         <Link to="/quotes" style={cardStyle}>💬 Quotes</Link>
         <Link to="/tasks" style={cardStyle}>📝 Tasks (CRUD)</Link>
         <Link to="/payment" style={cardStyle}>💳 Mock Payment</Link>
         <Link to="/payment-history" style={cardStyle}>📜 Payment History</Link>
 
-        {/* ✅ Admin-only features */}
+        {/* New TikTok Downloader */}
+        <Link to="/tiktok-downloader" style={cardStyle}>🎵 TikTok Downloader</Link>
+
+        {/* Admin-only features */}
         {isAdmin && (
           <>
-            <Link to="/admin/users" style={cardStyle}>
-              👥 Registered Users
-            </Link>
-            <Link to="/admin/add-user" style={cardStyle}>
-              ➕ Add User
-            </Link>
+            <Link to="/admin/users" style={cardStyle}>👥 Registered Users</Link>
+            <Link to="/admin/add-user" style={cardStyle}>➕ Add User</Link>
           </>
         )}
       </div>
