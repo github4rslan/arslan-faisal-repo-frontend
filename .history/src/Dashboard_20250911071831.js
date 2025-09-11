@@ -70,7 +70,7 @@ export default function Dashboard() {
         <Link to="/tasks" style={cardStyle}>📝 Tasks (CRUD)</Link>
         <Link to="/payment" style={cardStyle}>💳 Mock Payment</Link>
         <Link to="/payment-history" style={cardStyle}>📜 Payment History</Link>
-        <Link to="/Covid" style={cardStyle}>🦠 COVID-19 Stats</Link>
+        <Link to="/covid" style={cardStyle}>🦠 COVID-19 Stats</Link>
 
 
         {/* New TikTok Downloader */}

@@ -12,8 +12,7 @@ import AdminAddUser from "./AdminAddUser";
 import Payment from "./Payment";
 import PaymentHistory from "./PaymentHistory";
 import Trivia from "./Trivia";
-import TikTokDownloader from "./TikTokDownloader";
-import Covid from "./Covid"; // New feature placeholder
+import TikTokDownloader from "./TikTokDownloader"; // New feature placeholder
 
 
 function App() {
@@ -33,9 +32,7 @@ function App() {
         <Route path="/admin/add-user" element={<AdminAddUser />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/payment-history" element={<PaymentHistory />} />
-        <Route path="/tiktok-downloader" element={<TikTokDownloader />} />
-        <Route path="/covid" element={<Covid />} />
-
+        <Route path="/tiktok-downloader" element={<TikTokDownloader />} /> {/* New route */}
 
       </Routes>
     </Router>

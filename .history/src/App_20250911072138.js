@@ -13,7 +13,7 @@ import Payment from "./Payment";
 import PaymentHistory from "./PaymentHistory";
 import Trivia from "./Trivia";
 import TikTokDownloader from "./TikTokDownloader";
-import Covid from "./Covid"; // New feature placeholder
+import Covid from "./pages/Covid"; // New feature placeholder
 
 
 function App() {
