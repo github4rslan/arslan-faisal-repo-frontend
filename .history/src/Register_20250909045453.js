@@ -49,35 +49,40 @@ export default function Register() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        background: "linear-gradient(135deg, #42a5f5 0%, #1a237e 100%)",
+        background: "linear-gradient(135deg, #ff4081 0%, #7b1fa2 100%)",
       }}
     >
       <Container maxWidth="sm">
         <Paper
-          elevation={6}
+          elevation={8}
           sx={{
             p: 5,
             borderRadius: 4,
-            backdropFilter: "blur(12px)",
-            backgroundColor: "rgba(255,255,255,0.9)",
+            backdropFilter: "blur(14px)",
+            backgroundColor: "rgba(255, 255, 255, 0.85)",
+            boxShadow: "0px 8px 30px rgba(123, 31, 162, 0.5)",
           }}
         >
           <Typography
             variant="h4"
             align="center"
             gutterBottom
-            sx={{ fontWeight: "bold", color: "#1a237e" }}
+            sx={{
+              fontWeight: "bold",
+              color: "#7b1fa2",
+              textShadow: "0px 2px 6px rgba(123, 31, 162, 0.3)",
+            }}
           >
             Create Account
           </Typography>
 
           {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
+            <Alert severity="error" sx={{ mb: 2, borderRadius: 2 }}>
               {error}
             </Alert>
           )}
           {message && (
-            <Alert severity="success" sx={{ mb: 2 }}>
+            <Alert severity="success" sx={{ mb: 2, borderRadius: 2 }}>
               {message}
             </Alert>
           )}
@@ -92,6 +97,7 @@ export default function Register() {
               fullWidth
               margin="normal"
               required
+              variant="outlined"
             />
             <TextField
               label="Email"
@@ -102,6 +108,7 @@ export default function Register() {
               fullWidth
               margin="normal"
               required
+              variant="outlined"
             />
             <TextField
               label="Password"
@@ -112,6 +119,7 @@ export default function Register() {
               fullWidth
               margin="normal"
               required
+              variant="outlined"
             />
 
             <Button
@@ -121,24 +129,35 @@ export default function Register() {
               startIcon={<PersonAdd />}
               sx={{
                 mt: 3,
-                py: 1.3,
+                py: 1.4,
                 fontWeight: "bold",
                 fontSize: "1rem",
-                background: "linear-gradient(90deg, #43a047, #2e7d32)",
+                background: "linear-gradient(90deg, #ec407a, #d81b60)",
                 "&:hover": {
-                  background: "linear-gradient(90deg, #388e3c, #1b5e20)",
+                  background: "linear-gradient(90deg, #d81b60, #880e4f)",
                 },
-                borderRadius: "8px",
-                boxShadow: "0px 4px 12px rgba(67, 160, 71, 0.4)",
+                borderRadius: "10px",
+                boxShadow: "0px 6px 18px rgba(216, 27, 96, 0.4)",
+                letterSpacing: "0.5px",
               }}
             >
               Register
             </Button>
           </form>
 
-          <Typography align="center" sx={{ mt: 3, fontSize: "0.9rem" }}>
+          <Typography
+            align="center"
+            sx={{ mt: 3, fontSize: "0.9rem", color: "#444" }}
+          >
             Already have an account?{" "}
-            <Link to="/login" style={{ color: "#1976d2", fontWeight: "500" }}>
+            <Link
+              to="/login"
+              style={{
+                color: "#ec407a",
+                fontWeight: "600",
+                textDecoration: "none",
+              }}
+            >
               Login
             </Link>
           </Typography>

@@ -105,31 +105,15 @@ export default function Login() {
   };
 
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        background: "linear-gradient(135deg, #2196f3 0%, #1a237e 100%)",
-      }}
-    >
-      <Container maxWidth="sm">
-        <Paper
-          elevation={6}
-          sx={{
-            p: 5,
-            borderRadius: 4,
-            backdropFilter: "blur(12px)",
-            backgroundColor: "rgba(255,255,255,0.9)",
-          }}
-        >
-          <Typography
-            variant="h4"
-            align="center"
-            gutterBottom
-            sx={{ fontWeight: "bold", color: "#1a237e" }}
-          >
+    <Container maxWidth="sm">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh"
+      >
+        <Paper elevation={3} sx={{ p: 4, borderRadius: 3, width: "100%" }}>
+          <Typography variant="h4" align="center" gutterBottom>
             Login
           </Typography>
 
@@ -170,18 +154,7 @@ export default function Login() {
               type="submit"
               variant="contained"
               fullWidth
-              sx={{
-                mt: 3,
-                py: 1.3,
-                fontWeight: "bold",
-                fontSize: "1rem",
-                background: "linear-gradient(90deg, #1976d2, #0d47a1)",
-                "&:hover": {
-                  background: "linear-gradient(90deg, #1565c0, #0b3c91)",
-                },
-                borderRadius: "8px",
-                boxShadow: "0px 4px 12px rgba(25, 118, 210, 0.4)",
-              }}
+              sx={{ mt: 2, py: 1.2 }}
             >
               Login with Email
             </Button>
@@ -192,26 +165,19 @@ export default function Login() {
             fullWidth
             startIcon={<Google />}
             onClick={handleGoogleLogin}
-            sx={{
-              mt: 2,
-              py: 1.2,
-              borderRadius: "8px",
-              fontWeight: "500",
-              borderColor: "#ccc",
-              "&:hover": { backgroundColor: "#f9f9f9" },
-            }}
+            sx={{ mt: 2, py: 1.2 }}
           >
             Login with Google
           </Button>
 
-          <Typography align="center" sx={{ mt: 3, fontSize: "0.9rem" }}>
+          <Typography align="center" sx={{ mt: 3 }}>
             Don’t have an account?{" "}
-            <Link to="/register" style={{ color: "#1976d2", fontWeight: "500" }}>
+            <Link to="/register" style={{ color: "#1976d2" }}>
               Register
             </Link>
           </Typography>
         </Paper>
-      </Container>
-    </Box>
+      </Box>
+    </Container>
   );
 }
