@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api"; // ✅ axios instance
 
@@ -11,7 +11,7 @@ export default function EvenOddPage() {
   const navigate = useNavigate();
 
   // ✅ Fetch user (balance + history) when page loads
-  const fetchUser = useCallback(async () => {
+  const fetchUser = async () => {
     const user = JSON.parse(localStorage.getItem("user"));
     const token = localStorage.getItem("auth_token");
 
@@ -34,7 +34,7 @@ export default function EvenOddPage() {
     } catch (err) {
       console.error("⚠️ Error fetching user:", err);
     }
-  }, [navigate]); // Added navigate to avoid stale closures
+  };
 
   useEffect(() => {
     fetchUser();
@@ -46,7 +46,7 @@ export default function EvenOddPage() {
     window.addEventListener("storage", handleStorageChange);
 
     return () => window.removeEventListener("storage", handleStorageChange);
-  }, [fetchUser]); // Use fetchUser as a dependency
+  }, []);
 
   const handlePlay = async () => {
     if (!choice) {
