@@ -16,7 +16,6 @@ import TikTokDownloader from "./TikTokDownloader";
 import Covid from "./Covid"; // New feature placeholder
 import WhatsappChecker from "./WhatsappChecker";
 import TwitterPage from "./TwitterPage"; // New Twitter page
-import UserTweetsCheck from "./UserTweetsCheck"; // New component to display tweets
 
 
 function App() {
@@ -40,7 +39,8 @@ function App() {
         <Route path="/covid" element={<Covid />} />
         <Route path="/whatsapp-checker" element={<WhatsappChecker />} />
         <Route path="/twitter" element={<TwitterPage />} /> {/* New Twitter route */}
-        <Route path="/tweets-check" element={<UserTweetsCheck />} /> {/* New route for tweets */}
+
+
       </Routes>
     </Router>
   );

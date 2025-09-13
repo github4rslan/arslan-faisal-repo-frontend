@@ -40,7 +40,9 @@ function App() {
         <Route path="/covid" element={<Covid />} />
         <Route path="/whatsapp-checker" element={<WhatsappChecker />} />
         <Route path="/twitter" element={<TwitterPage />} /> {/* New Twitter route */}
-        <Route path="/tweets-check" element={<UserTweetsCheck />} /> {/* New route for tweets */}
+        <Route path="/twitter/tweets" element={<UserTweetsCheck />} /> {/* New route for tweets */}
+
+
       </Routes>
     </Router>
   );
