@@ -17,12 +17,7 @@ import Covid from "./Covid"; // New feature placeholder
 import WhatsappChecker from "./WhatsappChecker";
 import TwitterPage from "./TwitterPage"; // New Twitter page
 import UserTweetsCheck from "./UserTweetsCheck"; // New component to display tweets
-import BettingMainPage from "./Betting/BettingMainPage"; // New Betting main page
-import PaymentPage from "./Betting/PaymentPage"; // New Payment page
-import AccountPage from "./Betting/AccountPage"; // New Account page
-import LotteryPage from "./Betting/LotteryPage"; // New Lottery page
-import WithdrawPage from "./Betting/WithdrawPage";
-import DepositPage from "./Betting/DepositPage";
+import
 
 function App() {
   return (
@@ -47,12 +42,7 @@ function App() {
         <Route path="/twitter" element={<TwitterPage />} /> {/* New Twitter route */}
         <Route path="/tweets-check" element={<UserTweetsCheck />} /> {/* New route for tweets */} 
         <Route path="/betting" element={<BettingMainPage />} /> {/* New Betting route */}
-        <Route path="/betting/payment" element={<PaymentPage />} /> {/* New Payment route */}
-        <Route path="/betting/account" element={<AccountPage />} /> {/* New Account route */}
-        <Route path="/betting/lottery" element={<LotteryPage />} /> {/* New Lottery route */} 
-        <Route path="/betting/withdraw" element={<WithdrawPage />} />
-        <Route path="/betting/deposit" element={<DepositPage />} />
-      </Routes> 
+      </Routes>
     </Router>
   );
 }
