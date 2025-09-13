@@ -136,7 +136,7 @@ export default function Login() {
           justifyContent: "center",
           alignItems: "center",
           background: "linear-gradient(135deg, #1976d2 0%, #0d47a1 100%)", // Classic Blue Gradient
-
+ // Charcoal background
         }}
       >
         <Container maxWidth="xs">

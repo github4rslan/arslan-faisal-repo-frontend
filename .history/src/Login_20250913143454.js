@@ -135,8 +135,7 @@ export default function Login() {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          background: "linear-gradient(135deg, #1976d2 0%, #0d47a1 100%)", // Classic Blue Gradient
-
+          background: "linear-gradient(135deg, #312929 0%, #000000 100%)", // Classic Blue Gradient
         }}
       >
         <Container maxWidth="xs">

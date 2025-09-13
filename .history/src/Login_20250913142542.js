@@ -15,6 +15,7 @@ import {
   Button,
   Typography,
   Alert,
+  Paper,
 } from "@mui/material";
 import { Google } from "@mui/icons-material";
 import { AppProvider } from "@toolpad/core/AppProvider";
@@ -135,18 +136,17 @@ export default function Login() {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          background: "linear-gradient(135deg, #1976d2 0%, #0d47a1 100%)", // Classic Blue Gradient
-
+          background: "linear-gradient(135deg, #333 0%, #444 100%)", // Charcoal background
         }}
       >
-        <Container maxWidth="xs">
-          {/* Removed Paper component for a cleaner, simpler design */}
-          <Box
+        <Container maxWidth="sm">
+          <Paper
+            elevation={6}
             sx={{
-              p: 3,
-              borderRadius: 2,
-              backgroundColor: "rgba(255,255,255,0.9)", // Slight opacity for modern look
-              boxShadow: "none", // Removed card shadow
+              p: 5,
+              borderRadius: 4,
+              backdropFilter: "blur(12px)",
+              backgroundColor: "rgba(255,255,255,0.9)", // Slight opacity to make it look modern
             }}
           >
             <Typography
@@ -214,7 +214,7 @@ export default function Login() {
                     background: "#1565c0", // Darker on hover
                   },
                   borderRadius: "8px",
-                  boxShadow: "none", // Removed shadow for simpler look
+                  boxShadow: "0px 4px 12px rgba(25, 118, 210, 0.4)",
                 }}
               >
                 Login with Email
@@ -244,7 +244,7 @@ export default function Login() {
                 Register
               </Link>
             </Typography>
-          </Box>
+          </Paper>
         </Container>
       </Box>
     </AppProvider>

@@ -15,6 +15,7 @@ import {
   Button,
   Typography,
   Alert,
+  Paper,
 } from "@mui/material";
 import { Google } from "@mui/icons-material";
 import { AppProvider } from "@toolpad/core/AppProvider";
@@ -135,28 +136,24 @@ export default function Login() {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          background: "linear-gradient(135deg, #1976d2 0%, #0d47a1 100%)", // Classic Blue Gradient
-
+          background: "linear-gradient(135deg, #2196f3 0%, #1a237e 100%)",
         }}
       >
-        <Container maxWidth="xs">
-          {/* Removed Paper component for a cleaner, simpler design */}
-          <Box
+        <Container maxWidth="sm">
+          <Paper
+            elevation={6}
             sx={{
-              p: 3,
-              borderRadius: 2,
-              backgroundColor: "rgba(255,255,255,0.9)", // Slight opacity for modern look
-              boxShadow: "none", // Removed card shadow
+              p: 5,
+              borderRadius: 4,
+              backdropFilter: "blur(12px)",
+              backgroundColor: "rgba(255,255,255,0.9)",
             }}
           >
             <Typography
               variant="h4"
               align="center"
               gutterBottom
-              sx={{
-                fontWeight: "bold",
-                color: "#333", // Dark text color
-              }}
+              sx={{ fontWeight: "bold", color: "#1a237e" }}
             >
               Login
             </Typography>
@@ -182,9 +179,7 @@ export default function Login() {
                 fullWidth
                 margin="normal"
                 required
-                sx={{
-                  backgroundColor: "#f5f5f5", // Light input background
-                }}
+                sx={{ backgroundColor: "#f5f5f5" }}
               />
               <TextField
                 label="Password"
@@ -195,9 +190,7 @@ export default function Login() {
                 fullWidth
                 margin="normal"
                 required
-                sx={{
-                  backgroundColor: "#f5f5f5", // Light input background
-                }}
+                sx={{ backgroundColor: "#f5f5f5" }}
               />
 
               <Button
@@ -209,12 +202,12 @@ export default function Login() {
                   py: 1.3,
                   fontWeight: "bold",
                   fontSize: "1rem",
-                  background: "#1976d2", // Primary button color
+                  background: "linear-gradient(90deg, #1976d2, #0d47a1)",
                   "&:hover": {
-                    background: "#1565c0", // Darker on hover
+                    background: "linear-gradient(90deg, #1565c0, #0b3c91)",
                   },
                   borderRadius: "8px",
-                  boxShadow: "none", // Removed shadow for simpler look
+                  boxShadow: "0px 4px 12px rgba(25, 118, 210, 0.4)",
                 }}
               >
                 Login with Email
@@ -244,7 +237,7 @@ export default function Login() {
                 Register
               </Link>
             </Typography>
-          </Box>
+          </Paper>
         </Container>
       </Box>
     </AppProvider>
