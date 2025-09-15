@@ -6,7 +6,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 export default function TikTokDownloader() {
   const [url, setUrl] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
-  const [videoTitle, setVideoTitle] = useState(""); // Store the video title
+  const [nextVideoUrl, setNextVideoUrl] = useState(""); // To store the next video URL
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
@@ -20,7 +20,6 @@ export default function TikTokDownloader() {
     setLoading(true);
     setError("");
     setVideoUrl("");
-    setVideoTitle(""); // Reset the video title
     setRawResponse(null);
     setShowGuide(false);  // Hide the guide after clicking download button
 
@@ -42,7 +41,7 @@ export default function TikTokDownloader() {
 
       if (res.data?.videoUrl) {
         setVideoUrl(res.data.videoUrl);  // Use the HD video link (hdplay)
-        setVideoTitle(res.data.title || "No Title Available");  // Set video title if available, or fallback to default text
+        setNextVideoUrl(res.data.nextVideoUrl || ""); // Store next video URL (if available)
       } else {
         setError("No downloadable video found");
       }
@@ -69,8 +68,8 @@ export default function TikTokDownloader() {
     // Reset input and video state to allow new URL entry
     setUrl("");
     setVideoUrl("");
-    setVideoTitle("");  // Reset video title
     setError("");
+    setNextVideoUrl("");  // Reset next video URL
   };
 
   return (
@@ -80,12 +79,10 @@ export default function TikTokDownloader() {
         onSubmit={handleDownload}
         sx={{
           backgroundColor: "white",
-          padding: 3,  // Reduced padding for a smaller card
+          padding: 4,
           borderRadius: 2,
           boxShadow: 3,
           width: { xs: "90%", sm: "400px" },
-          maxHeight: "500px", // Limit the card height
-          overflowY: "auto", // Make card scrollable if content overflows
           transition: "all 0.3s ease",
           ":hover": {
             boxShadow: 12,
@@ -144,12 +141,7 @@ export default function TikTokDownloader() {
         </Tooltip>
 
         {videoUrl && (
-          <Box marginTop={2} sx={{ padding: 2 }}>
-            {videoTitle && (
-              <Typography variant="h6" align="center" gutterBottom>
-                {videoTitle}  {/* Display the title if it's available */}
-              </Typography>
-            )}
+          <Box marginTop={3} sx={{ padding: 2 }}>
             <video controls width="100%" src={videoUrl} />
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1, marginTop: 2 }}>
               <Button

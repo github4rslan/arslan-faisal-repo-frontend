@@ -80,12 +80,10 @@ export default function TikTokDownloader() {
         onSubmit={handleDownload}
         sx={{
           backgroundColor: "white",
-          padding: 3,  // Reduced padding for a smaller card
+          padding: 4,
           borderRadius: 2,
           boxShadow: 3,
           width: { xs: "90%", sm: "400px" },
-          maxHeight: "500px", // Limit the card height
-          overflowY: "auto", // Make card scrollable if content overflows
           transition: "all 0.3s ease",
           ":hover": {
             boxShadow: 12,
@@ -144,7 +142,7 @@ export default function TikTokDownloader() {
         </Tooltip>
 
         {videoUrl && (
-          <Box marginTop={2} sx={{ padding: 2 }}>
+          <Box marginTop={3} sx={{ padding: 2 }}>
             {videoTitle && (
               <Typography variant="h6" align="center" gutterBottom>
                 {videoTitle}  {/* Display the title if it's available */}

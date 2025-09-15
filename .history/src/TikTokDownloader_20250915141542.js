@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import api from "./api";
-import { TextField, Button, CircularProgress, Alert, Typography, Box, Collapse, Tooltip } from '@mui/material';
+import { TextField, Button, CircularProgress, Alert, Typography, Box, Collapse, Tooltip, Avatar } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 
 export default function TikTokDownloader() {
   const [url, setUrl] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
-  const [videoTitle, setVideoTitle] = useState(""); // Store the video title
+  const [videoDetails, setVideoDetails] = useState(null); // Store video details like title, author, etc.
+  const [nextVideoUrl, setNextVideoUrl] = useState(""); // To store the next video URL
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
@@ -20,8 +21,8 @@ export default function TikTokDownloader() {
     setLoading(true);
     setError("");
     setVideoUrl("");
-    setVideoTitle(""); // Reset the video title
     setRawResponse(null);
+    setVideoDetails(null); // Reset video details
     setShowGuide(false);  // Hide the guide after clicking download button
 
     if (!url) {
@@ -42,7 +43,19 @@ export default function TikTokDownloader() {
 
       if (res.data?.videoUrl) {
         setVideoUrl(res.data.videoUrl);  // Use the HD video link (hdplay)
-        setVideoTitle(res.data.title || "No Title Available");  // Set video title if available, or fallback to default text
+        setVideoDetails({
+          title: res.data.title,
+          duration: res.data.duration,
+          author: res.data.author.nickname,
+          authorAvatar: res.data.author.avatar,
+          cover: res.data.cover,
+          playCount: res.data.play_count,
+          commentCount: res.data.comment_count,
+          diggCount: res.data.digg_count,
+          musicTitle: res.data.music_info?.title,
+          musicCover: res.data.music_info?.cover,
+        });
+        setNextVideoUrl(res.data.nextVideoUrl || ""); // Store next video URL (if available)
       } else {
         setError("No downloadable video found");
       }
@@ -69,8 +82,9 @@ export default function TikTokDownloader() {
     // Reset input and video state to allow new URL entry
     setUrl("");
     setVideoUrl("");
-    setVideoTitle("");  // Reset video title
     setError("");
+    setNextVideoUrl("");  // Reset next video URL
+    setVideoDetails(null); // Reset video details
   };
 
   return (
@@ -80,12 +94,10 @@ export default function TikTokDownloader() {
         onSubmit={handleDownload}
         sx={{
           backgroundColor: "white",
-          padding: 3,  // Reduced padding for a smaller card
+          padding: 4,
           borderRadius: 2,
           boxShadow: 3,
           width: { xs: "90%", sm: "400px" },
-          maxHeight: "500px", // Limit the card height
-          overflowY: "auto", // Make card scrollable if content overflows
           transition: "all 0.3s ease",
           ":hover": {
             boxShadow: 12,
@@ -144,13 +156,21 @@ export default function TikTokDownloader() {
         </Tooltip>
 
         {videoUrl && (
-          <Box marginTop={2} sx={{ padding: 2 }}>
-            {videoTitle && (
-              <Typography variant="h6" align="center" gutterBottom>
-                {videoTitle}  {/* Display the title if it's available */}
+          <Box marginTop={3} sx={{ padding: 2 }}>
+            <Typography variant="h6" align="center" gutterBottom>
+              {videoDetails?.title}
+            </Typography>
+            <Typography variant="body2" color="textSecondary" align="center" gutterBottom>
+              <strong>Duration:</strong> {videoDetails?.duration} seconds
+            </Typography>
+            <Box display="flex" justifyContent="center" alignItems="center" gap={2}>
+              <Avatar src={videoDetails?.authorAvatar} alt={videoDetails?.author} sx={{ width: 40, height: 40 }} />
+              <Typography variant="body2" color="textSecondary">
+                <strong>Author:</strong> {videoDetails?.author}
               </Typography>
-            )}
-            <video controls width="100%" src={videoUrl} />
+            </Box>
+            <img src={videoDetails?.cover} alt="Video cover" width="100%" style={{ borderRadius: '8px', marginTop: '10px' }} />
+
             <Box sx={{ display: "flex", flexDirection: "column", gap: 1, marginTop: 2 }}>
               <Button
                 variant="outlined"
