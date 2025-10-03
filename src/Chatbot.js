@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import api from './api';
 import {
   CircularProgress,
@@ -8,7 +8,7 @@ import {
   Typography,
   Paper,
   Avatar,
-  useMediaQuery
+  useMediaQuery,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import ReactMarkdown from 'react-markdown';
@@ -26,9 +26,10 @@ const Chatbot = () => {
   // Auto-scroll
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, loading]);
+  }, [messages]);
 
-  const handleSendMessage = async () => {
+  // Memoize the handleSendMessage function to avoid unnecessary re-creations
+  const handleSendMessage = useCallback(async () => {
     const text = input.trim();
     if (!text || loading) return;
 
@@ -39,24 +40,25 @@ const Chatbot = () => {
     setMessages((prev) => [...prev, userMsg]);
 
     try {
+      // Sending only the current message instead of the entire history
       const response = await api.post('/chat/chat', {
-        messages: [...messages, { role: 'user', content: text }],
+        messages: [{ role: 'user', content: text }],
       });
 
-      const botText = response.data.message || "⚠️ No response received.";
+      const botText = response.data.message || '⚠️ No response received.';
       const botMsg = { role: 'bot', text: botText };
 
       setMessages((prev) => [...prev, botMsg]);
     } catch (error) {
-      console.error("Error:", error);
+      console.error('Error:', error);
       setMessages((prev) => [
         ...prev,
-        { role: 'bot', text: "⚠️ Something went wrong. Try again." }
+        { role: 'bot', text: '⚠️ Something went wrong. Try again.' },
       ]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [input, loading]);
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -86,11 +88,11 @@ const Chatbot = () => {
           p: { xs: 2, sm: 3 },
           display: 'flex',
           flexDirection: 'column',
-          height: isMobile ? '90vh' : '75vh', // taller on mobile
+          height: isMobile ? '90vh' : '75vh',
         }}
       >
         <Typography
-          variant={isMobile ? "h6" : "h4"}
+          variant={isMobile ? 'h6' : 'h4'}
           align="center"
           sx={{ fontWeight: 'bold', mb: 2 }}
         >

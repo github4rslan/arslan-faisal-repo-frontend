@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./Login";
 import Register from "./Register";
 import Dashboard from "./Dashboard";
@@ -25,13 +25,12 @@ import WithdrawPage from "./Betting/WithdrawPage";
 import DepositPage from "./Betting/DepositPage";
 import Chatbost from "./Chatbot"; // Chatbot component
 import Web3Page from "./web3Page"; // Import the Web3Page component
-import LandingPage from './LandingPage';
 
 function App() {
   return (
     <Router>
       <Routes>
-       <Route path="/" element={<LandingPage />} />
+        <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />

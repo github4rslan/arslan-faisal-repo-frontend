@@ -82,13 +82,13 @@ export default function Dashboard() {
         {/* New TikTok Downloader */}
         <Link to="/tiktok-downloader" style={cardStyle}>🎵 TikTok Downloader</Link>
         <Link to="/betting" style={cardStyle}>🎲 Betting App</Link>
-        <Link to="/chatbot" style={cardStyle}>💬 Chatbot</Link>
+
         {/* Admin-only features */}
         {isAdmin && (
           <>
             <Link to="/admin/users" style={cardStyle}>👥 Registered Users</Link>
             <Link to="/admin/add-user" style={cardStyle}>➕ Add User</Link>
-
+            <Link to="/chatbot" style={cardStyle}>💬 Chatbot</Link>
           </>
         )}
       </div>
