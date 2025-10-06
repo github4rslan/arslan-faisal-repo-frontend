@@ -181,7 +181,6 @@ export default function Login() {
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
-                required
                 sx={{
                   backgroundColor: "#f5f5f5", // Light input background
                 }}
@@ -194,7 +193,6 @@ export default function Login() {
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
-                required
                 sx={{
                   backgroundColor: "#f5f5f5", // Light input background
                 }}
